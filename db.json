@@ -1,0 +1,13 @@
+{
+  "tickets": [
+    {
+      "title": "ticket1",
+      "description": "bla bla bla",
+      "contactInfo": "djowjodjwdw",
+      "createdDate": "2021-02-08T15:43:58Z",
+      "updatedDate": "2021-02-08T15:43:58Z",
+      "ticketId": "b10b9511-43c8-45f8-9fa3-26d1904c06bd",
+      "status": "accepted"
+    }
+  ]
+}
