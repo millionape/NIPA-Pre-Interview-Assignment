@@ -15,8 +15,10 @@ $ npm install
   Start the server:
 
 ```bash
-$ npm start
+$ npm run start
 ```
 
   Base URL will be at: http://localhost:3000
+  
+  API document is here 👉  [API Document](https://petstore.swagger.io/?url=https://raw.githubusercontent.com/millionape/NIPA-Pre-Interview-Assignment/main/api-doc.yaml#/)
 
