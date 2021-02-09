@@ -7,12 +7,15 @@ exports.validateCreateTicketData = function (ticketData) {
     var constraints = {
         title: {
             presence: true,
+            type: "string"
         },
         description: {
             presence: true,
+            type: "string"
         },
         contactInfo: {
             presence: true,
+            type: "string"
         }
     };
     return validate(ticketData, constraints);
@@ -22,12 +25,15 @@ exports.validateTicketQueryData = function (ticketData) {
     var constraints = {
         title: {
             presence: true,
+            type: "string"
         },
         description: {
             presence: true,
+            type: "string"
         },
         contactInfo: {
             presence: true,
+            type: "string"
         }
     };
     return validate(ticketData, constraints);
@@ -36,6 +42,7 @@ exports.validateTicketQueryData = function (ticketData) {
 exports.validateTicketId = function (ticketId) {
     var constraints = {
         ticketId: {
+            type: "string",
             presence: true,
             length: {
                 minimum: 36,
@@ -49,6 +56,7 @@ exports.validateTicketId = function (ticketId) {
 exports.validateTicketStatus = function (ticketStatus) {
     var constraints = {
         ticketStatus: {
+            type: "string",
             presence: true,
             inclusion: {
                 within: ticketStatusType,
@@ -56,6 +64,7 @@ exports.validateTicketStatus = function (ticketStatus) {
             }
         },
         ticketId: {
+            type: "string",
             presence: true,
             length: {
                 minimum: 36,
@@ -71,6 +80,7 @@ exports.validateTicketQueryData = function (filterOptions) {
         var constraints = {
             status: {
                 presence: false,
+                type: "string",
                 inclusion: {
                     within: ticketStatusType,
                     message: `^Status must be in this following values [${ticketStatusType}]`
@@ -111,6 +121,7 @@ exports.validateTicketQueryData = function (filterOptions) {
         var constraints = {
             sortBy: {
                 presence: false,
+                type: "string",
                 inclusion: {
                     within: sortParameters,
                     message: `^Sort parameter must be in this following values [${sortParameters}]`
@@ -122,12 +133,23 @@ exports.validateTicketQueryData = function (filterOptions) {
             return statusValidateResult;
         }
     }
-    if ('page' in filterOptions) {
+    if ('pagination' in filterOptions) {
         var constraints = {
-            page: {
+            pagination: {
                 presence: false,
+            },
+            "pagination.page": {
+                presence: true,
                 numericality: {
                     onlyInteger: true,
+                    greaterThan: 0,
+                },
+            },
+            "pagination.itemsPerPage": {
+                presence: true,
+                numericality: {
+                    onlyInteger: true,
+                    greaterThan: 0,
                 }
             }
         };

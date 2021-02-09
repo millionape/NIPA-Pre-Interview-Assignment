@@ -1,0 +1,307 @@
+swagger: "2.0"
+info:
+  description: "This is a ticket manager API document "
+  version: "1.0.0"
+  title: "Ticket Management APIs"
+  contact:
+    email: "kittaporn.jp@gmail.com"
+host: "localhost:3000"
+basePath: "/"
+tags:
+- name: "Ticket"
+  description: "All you can do with the tickets is here!"
+schemes:
+- "http"
+paths:
+  /tickets/getAllTickets:
+    get:
+      tags:
+      - "Ticket"
+      summary: "Get all tickets"
+      description: "This api will return you all of tickets in our database"
+      operationId: "getAllTicket"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: The returned data of indoor unit
+          schema: 
+            $ref: '#/definitions/TicketDataResponse'
+  /tickets/getTicket:
+    get:
+      tags:
+      - "Ticket"
+      summary: "Get specific ticket"
+      description: "This api will return you a ticket that matched with given ticketId"
+      operationId: "getTicket"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: query
+        name: "ticketId"
+        format: "uuid"
+        type: "string"
+        description: "The ticket id that you wanted to get ( in UUIDv4 format )"
+        required: true
+      responses:
+        200:
+          description: The returned data of indoor unit
+          schema: 
+            type: "object"
+            properties:
+              title:
+                type: "string"
+                example: "Fan meeting ticket"
+              description:
+                type: "string"
+                example: "This ticket will get you in the party"
+              contactInfo:
+                type: "string"
+                example: "+665112583, Mr.Somsak.J"
+              createdDate: 
+                type: "string"
+                example: "2021-02-03 13:10:00"
+              updatedDate:
+                type: "string"
+                example: "2021-02-03 13:10:00"
+              ticketId:
+                type: "string"
+                format: "uuid"
+              status:
+                type: "string"
+                example: "accepted"
+  /tickets/createNewTicket:
+    post:
+      tags:
+      - "Ticket"
+      summary: "Create a new ticket"
+      description: "This api will create a new ticket with required parameters"
+      operationId: "createNewTicket"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "The required parameters to create a new ticket as following"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateNewTicketParameter"
+      responses:
+        200:
+          description: The returned data of indoor unit
+          schema: 
+            $ref: '#/definitions/CreateNewTicketResponse'
+  /tickets/setTicketStatus:
+    post:
+      tags:
+      - "Ticket"
+      summary: "Set the ticket statuts"
+      description: "This api will update the tciket status that matched with given ticketId"
+      operationId: "setTicketStatus"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "The required parameters to create a new ticket as following"
+        required: true
+        schema:
+          $ref: "#/definitions/SetStatusParameter"
+      responses:
+        200:
+          description: The returned data of indoor unit
+          schema: 
+            type: "object"
+            properties:
+              result:
+                type: "string"
+                example: "Status [accepted] has been set for ticket id [3fa85f64-5717-4562-b3fc-2c963f66afa6]"
+  /tickets/getTickets:
+    post:
+      tags:
+      - "Ticket"
+      summary: "Query tickets by given conditions"
+      description: "This api will query tickets by given conditions"
+      operationId: "getTickets"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "You can query tickets by passing this following conditions into body \n - status: Query by status accepted value [pending, accepted, resolved, rejected]\n - dateRage: Query by date range\n - sortBy: Sort the result by these parameters [title, description, contactInfo, createdDate, updatedDate, ticketId, status]\n - pagination: You can also do the pagination by giving the page number and how many items per page that you want to \n\n *** All the conditions are optional you don't have to use all of conditions to get them \n *** When yo do to the pagination, total page and current page will be returned in response header "
+        required: true
+        schema:
+          $ref: "#/definitions/QueryTicketsConditions"
+      responses:
+        200:
+          description: The returned data of indoor unit
+          schema: 
+            $ref: "#/definitions/QueryTicketDataResponse"
+  /tickets/deleteTicket:
+    delete:
+      tags:
+      - "Ticket"
+      summary: "Delete ticket"
+      description: "This api will remove the specific ticket from database"
+      operationId: "deleteTicket"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: query
+        name: "ticketId"
+        format: "uuid"
+        type: "string"
+        description: "The ticket id that you wanted to delete ( in UUIDv4 format )"
+        required: true
+      responses:
+        200:
+          description: "The response when ticket removed succesfully"
+          schema: 
+            type: "object"
+            properties:
+              result:
+                type: "string"
+                example: "ticket id: ${ticketId} has beeen removed"
+            
+definitions:
+  QueryTicketsConditions:
+    type: "object"
+    properties:
+      status:
+        type: "string"
+        description: "The status must be in this following values [pending, accepted, rejected, resolved]"
+        example: "accepted"
+      dateRage:
+        type: "object"
+        properties:
+          startDate:
+            type: "string"
+            example: "2021-02-06T01:47:15Z"
+          endDate:
+            type: "string"
+            example: "2021-02-09T04:47:15Z"
+      sortBy:
+        type: "string"
+        description: "The sortBy must be in this following values [title, description, contactInfo, createdDate, updatedDate, ticketId, status]"
+        example: "status"
+      pagination:
+        type: "object"
+        properties:
+          page:
+            type: "number"
+            description: "Page number that you want to get"
+            example: 1
+          itemsPerPage:
+            type: "number"
+            description: "How many items per page that you want to do"
+            example: 2
+        
+  SetStatusParameter:
+    type: "object"
+    properties:
+      ticketStatus:
+        type: "string"
+        example: "accepted"
+      ticketId:
+        type: "string"
+        format: "uuid"
+        example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  CreateNewTicketParameter:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+        example: "Free entrance ticket GTR-69"
+      description:
+        type: "string"
+        example: "This ticket will get you in easily"
+      contactInfo:
+        type: "string"
+        example: "+66876225188, Mr.Pavin"
+  CreateNewTicketResponse:
+    type: "object"
+    properties:
+      result:
+        type: "string"
+        example: "created, ticketId: 4adddcb0-e3e3-47cd-838c-648234536a8a"
+  
+
+    
+  TicketDataModel:
+    type: "object"
+    properties:
+      title:
+        type: "string"
+      description:
+        type: "string"
+      contactInfo:
+        type: "string"
+      createdDate: 
+        type: "string"
+        example: "2021-02-03 13:10:00"
+      updatedDate:
+        type: "string"
+        example: "2021-02-03 13:10:00"
+      ticketId:
+        type: "string"
+        format: "uuid"
+      status:
+        type: "string"
+  TicketDataResponse:
+    type: "array"
+    items:
+      $ref: '#/definitions/TicketDataModel'
+    example:
+      - title: "Ticket-KI-NG-10"
+        description: "This is a ticket for fan meeting event"
+        contactInfo: "+66804329922, Mr.Somsak.J"
+        createdDate: "2021-02-03 13:19:00"
+        updatedDate: "2021-02-03 13:20:00"
+        ticketId: "yyw85f10-9898-7653-b3fc-2c963f66afppw"
+        status: "accepted"
+      - title: "Ticket-AH-RW-12"
+        description: "This is a ticket for get free beers"
+        contactInfo: "+66833321722, Mr.John Chaorai"
+        createdDate: "2021-02-03 13:12:00"
+        updatedDate: "2021-02-03 13:12:00"
+        ticketId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        status: "pending"
+      - title: "Ticket-OP-CC-37"
+        description: "This is a ticket to get in the party"
+        contactInfo: "+66804329922, Mr.Bung Clone"
+        createdDate: "2021-02-03 13:18:00"
+        updatedDate: "2021-02-03 13:18:00"
+        ticketId: "1ga85f64-5717-7653-b3fc-2c963f66afl9"
+        status: "rejected"
+  QueryTicketDataResponse:
+    type: "array"
+    items:
+      $ref: '#/definitions/TicketDataModel'
+    example:
+      - title: "Ticket-AH-RW-12"
+        description: "This is a ticket for get free beers"
+        contactInfo: "+66833321722, Mr.John Chaorai"
+        createdDate: "2021-02-06 13:12:00"
+        updatedDate: "2021-02-06 13:12:00"
+        ticketId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+        status: "accepted"
+      - title: "Ticket-OP-CC-37"
+        description: "This is a ticket to get in the party"
+        contactInfo: "+66804329922, Mr.Bung Clone"
+        createdDate: "2021-02-09 00:18:00"
+        updatedDate: "2021-02-09 00:18:00"
+        ticketId: "1ga85f64-5717-7653-b3fc-2c963f66afl9"
+        status: "accepted"
+      
